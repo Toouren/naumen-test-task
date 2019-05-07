@@ -1,0 +1,8 @@
+<div class="archive-wrapper" (mouseenter)=enteredOnBlock() (mouseleave)=leaveBlock() [ngClass]="showClass">
+  <div class="archive-wrapper__header">История поиска:</div>
+  <div class="search-blocks-container" *ngFor="let searchRequest of searchArchive.reverse()">
+    <div class="search-block" (click)=makeRequestToWiki(request.innerText,locale.innerText)>
+      <div class="search-block__request" #request>{{searchRequest.request}}</div>
+      <div class="search-block__locale" #locale>{{searchRequest.locale}}</div>
+  </div>
+</div>

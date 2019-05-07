@@ -6,12 +6,14 @@ import { InputFormComponent } from './input-form/input-form.component';
 import { HttpClientModule } from '@angular/common/http';
 import { WikiapiWorkerService } from './wikiapi-worker/wikiapi-worker.service';
 import { WikiBlockComponent } from './wiki-block/wiki-block.component';
+import { ArchiveBlockComponent } from './archive-block/archive-block.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     InputFormComponent,
-    WikiBlockComponent
+    WikiBlockComponent,
+    ArchiveBlockComponent
   ],
   imports: [
     BrowserModule,

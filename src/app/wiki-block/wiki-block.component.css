@@ -3,8 +3,7 @@
 .found-block
 {
   font-family: 'Roboto', sans-serif;
-  margin: 10px auto;
-  border: 1px solid rgba(145, 145, 145, .4);
+  margin: 30px auto;
   width: 70%;
   position: relative;
   transition-property: all;
@@ -15,19 +14,26 @@
 .found-block__title
 {
   margin: 10px;
+  font-size: 20px;
 }
 
 .found-block__content
 {
   margin: 10px;
+  font-size: 18px;
+  color: rgb(119, 119, 119);
+}
+
+.load-more__content
+{
+  font-family: 'Roboto', sans-serif;
+  color: rgba(145, 145, 145, .7);
+  font-size: 15px;
+  cursor: pointer;
+  margin: 10px auto;
 }
 
 .load-more
 {
-  font-family: 'Roboto', sans-serif;
-  color: rgba(145, 145, 145, .7);
-  text-align: center;
-  font-size: 15px;
-  cursor: pointer;
-  margin: 10px 0;
+  display: flex;
 }

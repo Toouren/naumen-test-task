@@ -15,6 +15,6 @@
     <div class="found-block__content">Произошла ошибка поиска.</div>
   </div>
 </div>
-<div *ngIf="loadMore">
-  <div class=load-more (click)=getMoreData()>Загрузить еще</div>
+<div *ngIf="loadMore" class="load-more">
+  <div class="load-more__content" (click)=getMoreData()>Загрузить еще</div>
 </div>

@@ -9,6 +9,7 @@ export class WikiapiWorkerService {
   getJsonSuccessEvent: EventEmitter<IWikiResponse> = new EventEmitter();
   getJsonErrorEvent: EventEmitter<IWikiResponse> = new EventEmitter();
   getJsonEmptyEvent: EventEmitter<IWikiResponse> = new EventEmitter();
+  archiveChangedEvent: EventEmitter<ISearchRequest[]> = new EventEmitter();
   searchArchive: ISearchRequest[] = [];
 
   constructor(private httpClient: HttpClient) { }
@@ -28,6 +29,7 @@ export class WikiapiWorkerService {
         this.searchArchive.splice(0, 1);
       }
       this.searchArchive.push(searchRequest);
+      this.emiteArchiveChangedEvent();
     }
   }
 
@@ -36,8 +38,6 @@ export class WikiapiWorkerService {
     srlimit = srlimit || 10;
     request = (typeof request !== 'undefined') ? request : lastSearchRequst.request;
     locale = locale || lastSearchRequst.locale;
-    console.log(this.searchArchive);
-    console.log(`locale: ${locale}, request: ${request}, sroffset: ${sroffset}, srlimit: ${srlimit}`);
 
     let url = `https://${locale}.wikipedia.org/w/api.php?
                   origin=*&
@@ -68,7 +68,11 @@ export class WikiapiWorkerService {
         });
   }
 
-  public emitGetJsonEvent(res: IWikiResponse) {
+  emiteArchiveChangedEvent() {
+    this.archiveChangedEvent.emit(this.searchArchive);
+  }
+
+  emitGetJsonEvent(res: IWikiResponse) {
     this.wikiResponseObject = res;
     console.log(this.wikiResponseObject);
     if (this.wikiResponseObject.error) {
