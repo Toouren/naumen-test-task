@@ -8,13 +8,9 @@
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
-    "postinstall": "ng build --aot -prod"
+    "heroku-postbuild": "ng build --prod"
   },
   "private": true,
-  "engines": {
-    "node": "6.11.0",
-    "npm": "3.10.10"
-  },
   "dependencies": {
     "@angular/animations": "~7.2.0",
     "@angular/common": "~7.2.0",
@@ -53,5 +49,9 @@
     "tar": ">=4.4.2",
     "ts-node": "~7.0.0",
     "tslint": "~5.11.0"
+  },
+  "engines": {
+    "node": "6.11.0",
+    "npm": "3.10.10"
   }
 }
