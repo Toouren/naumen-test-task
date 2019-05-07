@@ -22,7 +22,8 @@
     "core-js": "^2.5.4",
     "rxjs": "~6.3.3",
     "tslib": "^1.9.0",
-    "zone.js": "~0.8.26"
+    "zone.js": "~0.8.26",
+    "typescript": "~3.2.2"
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "~0.13.0",
@@ -42,7 +43,6 @@
     "karma-jasmine-html-reporter": "^0.2.2",
     "protractor": "~5.4.0",
     "ts-node": "~7.0.0",
-    "tslint": "~5.11.0",
-    "typescript": "~3.2.2"
+    "tslint": "~5.11.0"
   }
 }

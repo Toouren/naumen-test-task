@@ -1,0 +1,10 @@
+<div class="input-block" [ngClass]="className">
+  <input class="input-block__input" #requestInput>
+  <button class="input-block__button" (click)="makeRequestToWiki(requestInput.value)">Найти</button>
+</div>
+<div class="locale-block" [ngClass]="className">
+  <label *ngFor="let locale of locales" class="locale-label">
+    <input type="radio" name="locale-radio" value="{{locale.shortForm}}" (change)="localeChangeHandler($event)" checked>
+    <div class="locale-label__name">{{locale.normalForm}}</div>
+  </label>
+</div>

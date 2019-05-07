@@ -1,0 +1,20 @@
+<div *ngIf="successResponse">
+  <div *ngFor="let foundBlock of dataObject?.query?.search" class="found-block" [style.left]="leftAlignValue">
+    <div class="found-block__title">{{foundBlock.title}}</div>
+    <div [innerHTML]="foundBlock.snippet" class="found-block__content"></div>
+  </div>
+</div>
+<div *ngIf="emptyResponse">
+  <div class="found-block" [style.left]="leftAlignValue">
+    <div class="found-block__content">По введенной информации, к сожалению, ничего не найдено.<br>
+    Попробуйте сменить локализацию или проверить корректность запроса.</div>
+  </div>
+</div>
+<div *ngIf="!successResponse && !emptyResponse">
+  <div class="found-block" [style.left]="leftAlignValue">
+    <div class="found-block__content">Произошла ошибка поиска.</div>
+  </div>
+</div>
+<div *ngIf="loadMore">
+  <div class=load-more (click)=getMoreData()>Загрузить еще</div>
+</div>

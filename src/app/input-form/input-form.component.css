@@ -1,0 +1,87 @@
+@import url('https://fonts.googleapis.com/css?family=Roboto');
+
+.input-block
+{
+  display: flex;
+  width: 70%;
+  margin: auto;
+  position: relative;
+  top: calc(50vh - 15px);
+  transition-property: all;
+  transition-duration: 1.5s;
+}
+
+.input-block__input
+{
+  height: 30px;
+  font-size: 20px;
+  margin-right: auto;
+  width: 80%;
+  padding-left: 10px;
+  border: 1px solid rgba(145, 145, 145, .7);
+  outline: none;
+  font-family: 'Roboto', sans-serif;
+}
+
+.input-block__button
+{
+  border-style: none;
+  width: 15%;
+  border-radius: 7px;
+  background-color: #f49ec4;
+  color: white;
+  font-size: 20px;
+  outline: none;
+  cursor: pointer;
+  font-family: 'Roboto', sans-serif;
+}
+
+.input-block__button:hover
+{
+  background: linear-gradient(90deg, rgb(54, 6, 27), rgb(136, 15, 67));
+}
+
+.locale-block
+{
+  transition-property: all;
+  transition-duration: 1.5s;
+  font-family: 'Roboto', sans-serif;
+  display: flex;
+  width: 30%;
+  margin: auto;
+  position: relative;
+  justify-content: space-around;
+  top: calc(50vh + 30px);
+}
+
+.success
+{
+  margin: 20px auto;
+  top: 0;
+}
+
+.locale-label
+{
+  cursor: pointer;
+  margin: auto;
+  color: rgba(145, 145, 145, .7);
+}
+
+.locale-label input
+{
+  display: none;
+}
+
+.locale-label__name
+{
+  transition-property: all;
+  transition-duration: .7s;
+  padding: 6px;
+  border: 2px solid rgba(0, 0, 0, 0);
+  border-radius: 5px;
+}
+
+.locale-label input:checked ~ .locale-label__name
+{
+  border-color: #f49ec4;
+}
