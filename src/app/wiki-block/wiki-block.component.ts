@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { WikiapiWorkerService } from '../wikiapi-worker/wikiapi-worker.service';
 
 import { IWikiResponse, IWikiRequest } from '../types';
@@ -10,8 +10,7 @@ import { IWikiResponse, IWikiRequest } from '../types';
 })
 export class WikiBlockComponent implements OnInit {
 
-  @Input()
-  dataObject: IWikiResponse;
+  arrayOfResponse: IWikiResponse[] = [];
   successResponse = true;
   emptyResponse = false;
   loadMore = false;
@@ -21,17 +20,19 @@ export class WikiBlockComponent implements OnInit {
     this.wikiapiWorkerService
         .getJsonSuccessEvent
         .subscribe(
-          (data: IWikiResponse) => this.renderPageUpdatedData(data, true, false)
-        );
+          (data: IWikiResponse[]) => {
+            console.log(`event`);
+            this.renderPageUpdatedData(data, true, false);
+        });
     this.wikiapiWorkerService
         .getJsonErrorEvent
         .subscribe(
-          (data: IWikiResponse) => this.renderPageUpdatedData(data, false, false)
+          (data: IWikiResponse[]) => this.renderPageUpdatedData(data, false, false)
         );
     this.wikiapiWorkerService
         .getJsonEmptyEvent
         .subscribe(
-          (data: IWikiResponse) => this.renderPageUpdatedData(data, false, true)
+          (data: IWikiResponse[]) => this.renderPageUpdatedData(data, false, true)
         );
    }
 
@@ -42,30 +43,102 @@ export class WikiBlockComponent implements OnInit {
     setTimeout(() => this.leftAlignValue = value, timout);
   }
 
+  setAlignValue(value: string) {
+    this.leftAlignValue = value;
+  }
+
+  getLastResponse(): IWikiResponse {
+    return this.arrayOfResponse[this.arrayOfResponse.length - 1];
+  }
+
   setLoadMoreFlag() {
-    if (typeof this.dataObject.continue !== 'undefined') {
+    if (typeof this.getLastResponse().continue !== 'undefined') {
       this.loadMore = true;
       return;
     }
     this.loadMore = false;
   }
 
-  renderPageUpdatedData(data: IWikiResponse, successResponseFlag: boolean, emptyResponseFlag: boolean) {
-    this.setAlignValueAsync('100vw');
-    setTimeout(() => {
-      this.successResponse = successResponseFlag;
-      this.emptyResponse = emptyResponseFlag;
-    }, 500);
-    setTimeout(() => {
-      this.dataObject = data;
-      this.setLoadMoreFlag();
-    }, 1000);
-    this.setAlignValueAsync('0', 1500);
+  setAlignPromise(value: string, timout: number) {
+    // tslint:disable-next-line:no-shadowed-variable
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        this.setAlignValue(value);
+        resolve();
+      }, timout);
+    });
+  }
+
+  setFlagsPromise(successResponseFlag: boolean, emptyResponseFlag: boolean) {
+    // tslint:disable-next-line:no-shadowed-variable
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        this.setFlags(successResponseFlag, emptyResponseFlag);
+        resolve();
+      }, 0);
+    });
+  }
+
+  setArrayOfResponsePromise(data: IWikiResponse[]) {
+    // tslint:disable-next-line:no-shadowed-variable
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        this.setData(data);
+        resolve();
+      }, 1000);
+    });
+  }
+
+  setLoadMoreFlagPromise() {
+    // tslint:disable-next-line:no-shadowed-variable
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        this.setLoadMoreFlag();
+        resolve();
+      }, 0);
+    });
+  }
+
+  setFlags(successResponseFlag: boolean, emptyResponseFlag: boolean) {
+    this.successResponse = successResponseFlag;
+    this.emptyResponse = emptyResponseFlag;
+  }
+
+  setData(arrayOfResponse: IWikiResponse[]) {
+    console.log(`in setData1: `);
+    console.log(this.arrayOfResponse);
+    this.arrayOfResponse = arrayOfResponse;
+    console.log(`in setData2: `);
+    console.log(this.arrayOfResponse);
+  }
+
+  renderPageUpdatedData(data: IWikiResponse[], successResponseFlag: boolean, emptyResponseFlag: boolean) {
+    Promise.resolve()
+      .then(() => {
+        console.log(this.arrayOfResponse);
+        return this.setAlignPromise('100vw', 0);
+      })
+      .then(() => {
+        console.log(this.arrayOfResponse);
+        return this.setFlagsPromise(successResponseFlag, emptyResponseFlag);
+      })
+      .then(() => {
+        console.log(this.arrayOfResponse);
+        return this.setArrayOfResponsePromise(data);
+      })
+      .then(() => {
+        console.log(this.arrayOfResponse);
+        return this.setLoadMoreFlagPromise();
+      })
+      .then(() => {
+        console.log(this.arrayOfResponse);
+        return this.setAlignPromise('0', 500);
+      });
   }
 
   getMoreData() {
     const wikiRequest: IWikiRequest = {
-      sroffset: this.dataObject.continue.sroffset
+      sroffset: this.getLastResponse().continue.sroffset
     };
     this.wikiapiWorkerService.getJson(wikiRequest);
   }

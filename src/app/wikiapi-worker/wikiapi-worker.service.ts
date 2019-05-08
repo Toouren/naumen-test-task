@@ -1,16 +1,17 @@
 import { Injectable, EventEmitter } from '@angular/core';
-import { HttpClient, HttpResponse } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 
 import { IWikiResponse, ISearchRequest, IWikiRequest, IUrl } from '../types';
 
 @Injectable()
 export class WikiapiWorkerService {
-  wikiResponseObject: IWikiResponse;
-  getJsonSuccessEvent: EventEmitter<IWikiResponse> = new EventEmitter();
-  getJsonErrorEvent: EventEmitter<IWikiResponse> = new EventEmitter();
-  getJsonEmptyEvent: EventEmitter<IWikiResponse> = new EventEmitter();
+  wikiResponseArray: IWikiResponse[] = [];
+  getJsonSuccessEvent: EventEmitter<IWikiResponse[]> = new EventEmitter();
+  getJsonErrorEvent: EventEmitter<IWikiResponse[]> = new EventEmitter();
+  getJsonEmptyEvent: EventEmitter<IWikiResponse[]> = new EventEmitter();
   archiveChangedEvent: EventEmitter<ISearchRequest[]> = new EventEmitter();
   searchArchive: ISearchRequest[] = [];
+  sroffsetFlag = false;
 
   constructor(private httpClient: HttpClient) { }
 
@@ -48,7 +49,10 @@ export class WikiapiWorkerService {
                   utf8=&
                   format=json`;
     if (sroffset) {
+      this.sroffsetFlag = true;
       url += `&sroffset=${sroffset}`;
+    } else {
+      this.sroffsetFlag = false;
     }
     return {
       urlString: url,
@@ -72,17 +76,19 @@ export class WikiapiWorkerService {
     this.archiveChangedEvent.emit(this.searchArchive);
   }
 
-  emitGetJsonEvent(res: IWikiResponse) {
-    this.wikiResponseObject = res;
-    console.log(this.wikiResponseObject);
-    if (this.wikiResponseObject.error) {
-      this.getJsonErrorEvent.emit(this.wikiResponseObject);
-    } else {
-      if (this.wikiResponseObject.query.searchinfo.totalhits === 0) {
-        this.getJsonEmptyEvent.emit(this.wikiResponseObject);
-      } else {
-        this.getJsonSuccessEvent.emit(this.wikiResponseObject);
-      }
-    }
+  setWikiResponseArray(response: IWikiResponse) {
+    this.sroffsetFlag ? this.wikiResponseArray.push(response) :
+    this.wikiResponseArray.splice(0, this.wikiResponseArray.length, response);
+  }
+
+  getLastResponse(): IWikiResponse {
+    return this.wikiResponseArray[this.wikiResponseArray.length - 1];
+  }
+
+  emitGetJsonEvent(response: IWikiResponse) {
+    this.setWikiResponseArray(response);
+    this.getLastResponse().error ? this.getJsonErrorEvent.emit(this.wikiResponseArray) :
+    this.getLastResponse().query.searchinfo.totalhits === 0 ? this.getJsonEmptyEvent.emit(this.wikiResponseArray) :
+    this.getJsonSuccessEvent.emit(this.wikiResponseArray);
   }
 }

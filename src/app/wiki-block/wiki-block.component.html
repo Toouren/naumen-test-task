@@ -1,7 +1,13 @@
 <div *ngIf="successResponse">
-  <div *ngFor="let foundBlock of dataObject?.query?.search" class="found-block" [style.left]="leftAlignValue">
-    <div class="found-block__title">{{foundBlock.title}}</div>
-    <div [innerHTML]="foundBlock.snippet" class="found-block__content"></div>
+  <div *ngFor="let response of arrayOfResponse" class="found-block-wrapper" [style.left]="leftAlignValue">
+    <div *ngFor="let foundBlock of response?.query?.search" class="found-block">
+      <div class="found-block__title">{{foundBlock.title}}</div>
+      <div [innerHTML]="foundBlock.snippet+'...'" class="found-block__content"></div>
+      <div class="info-block">
+        <div class="info-block__word-number">Кол-во слов: {{foundBlock.wordcount}}</div>
+        <div class="info-block__last-update">Обновлена: {{foundBlock.timestamp.slice(0, 10)}}</div>
+      </div>
+    </div>
   </div>
 </div>
 <div *ngIf="emptyResponse">
