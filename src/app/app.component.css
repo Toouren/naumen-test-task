@@ -11,6 +11,13 @@
   flex-wrap: wrap;
 }
 
+.wiki-block-wrapper
+{
+  overflow: hidden;
+  display: flex;
+  flex-wrap: wrap;
+}
+
 .input-app-wrapper,
 .wiki-block-wrapper
 {

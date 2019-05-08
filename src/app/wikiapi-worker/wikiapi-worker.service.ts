@@ -15,15 +15,21 @@ export class WikiapiWorkerService {
 
   constructor(private httpClient: HttpClient) { }
 
+  validRequest(searchRequest: ISearchRequest): boolean {
+    const lastSearchRequst: ISearchRequest = this.searchArchive[this.searchArchive.length - 1];
+    return searchRequest.request === '' ||
+        (typeof lastSearchRequst !== 'undefined' &&
+        lastSearchRequst.locale === searchRequest.locale &&
+        lastSearchRequst.request === searchRequest.request);
+  }
+
   pushRequestToSearchArchive(url: IUrl) {
     const searchRequest: ISearchRequest = {
       request: url.request,
       locale: url.locale
     };
-    const lastSearchRequst: ISearchRequest = this.searchArchive[this.searchArchive.length - 1];
-    if (typeof lastSearchRequst !== 'undefined' &&
-        lastSearchRequst.locale === searchRequest.locale &&
-        lastSearchRequst.request === searchRequest.request) {
+
+    if (this.validRequest(searchRequest)) {
       return;
     } else {
       if (this.searchArchive.length >= 10) {
@@ -87,8 +93,8 @@ export class WikiapiWorkerService {
 
   emitGetJsonEvent(response: IWikiResponse) {
     this.setWikiResponseArray(response);
-    this.getLastResponse().error ? this.getJsonErrorEvent.emit(this.wikiResponseArray) :
-    this.getLastResponse().query.searchinfo.totalhits === 0 ? this.getJsonEmptyEvent.emit(this.wikiResponseArray) :
-    this.getJsonSuccessEvent.emit(this.wikiResponseArray);
+    this.getLastResponse().error ? this.getJsonErrorEvent.emit(Array.from(this.wikiResponseArray)) :
+    this.getLastResponse().query.searchinfo.totalhits === 0 ? this.getJsonEmptyEvent.emit(Array.from(this.wikiResponseArray)) :
+    this.getJsonSuccessEvent.emit(Array.from(this.wikiResponseArray));
   }
 }

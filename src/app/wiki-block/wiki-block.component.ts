@@ -20,10 +20,7 @@ export class WikiBlockComponent implements OnInit {
     this.wikiapiWorkerService
         .getJsonSuccessEvent
         .subscribe(
-          (data: IWikiResponse[]) => {
-            console.log(`event`);
-            this.renderPageUpdatedData(data, true, false);
-        });
+          (data: IWikiResponse[]) => this.renderPageUpdatedData(data, true, false));
     this.wikiapiWorkerService
         .getJsonErrorEvent
         .subscribe(
@@ -51,11 +48,9 @@ export class WikiBlockComponent implements OnInit {
     return this.arrayOfResponse[this.arrayOfResponse.length - 1];
   }
 
-  setLoadMoreFlag() {
-    if (typeof this.getLastResponse().continue !== 'undefined') {
-      this.loadMore = true;
-      return;
-    }
+  setLoadMoreFlag(flag?: boolean) {
+    typeof flag !== 'undefined' ? this.loadMore = flag :
+    typeof this.getLastResponse().continue !== 'undefined' ? this.loadMore = true :
     this.loadMore = false;
   }
 
@@ -75,7 +70,7 @@ export class WikiBlockComponent implements OnInit {
       setTimeout(() => {
         this.setFlags(successResponseFlag, emptyResponseFlag);
         resolve();
-      }, 0);
+      }, 1000);
     });
   }
 
@@ -85,15 +80,15 @@ export class WikiBlockComponent implements OnInit {
       setTimeout(() => {
         this.setData(data);
         resolve();
-      }, 1000);
+      }, 0);
     });
   }
 
-  setLoadMoreFlagPromise() {
+  setLoadMoreFlagPromise(value?: boolean) {
     // tslint:disable-next-line:no-shadowed-variable
     return new Promise((resolve) => {
       setTimeout(() => {
-        this.setLoadMoreFlag();
+        this.setLoadMoreFlag(value);
         resolve();
       }, 0);
     });
@@ -105,33 +100,27 @@ export class WikiBlockComponent implements OnInit {
   }
 
   setData(arrayOfResponse: IWikiResponse[]) {
-    console.log(`in setData1: `);
-    console.log(this.arrayOfResponse);
     this.arrayOfResponse = arrayOfResponse;
-    console.log(`in setData2: `);
-    console.log(this.arrayOfResponse);
   }
 
   renderPageUpdatedData(data: IWikiResponse[], successResponseFlag: boolean, emptyResponseFlag: boolean) {
     Promise.resolve()
       .then(() => {
-        console.log(this.arrayOfResponse);
         return this.setAlignPromise('100vw', 0);
       })
       .then(() => {
-        console.log(this.arrayOfResponse);
+        return this.setLoadMoreFlagPromise(false);
+      })
+      .then(() => {
         return this.setFlagsPromise(successResponseFlag, emptyResponseFlag);
       })
       .then(() => {
-        console.log(this.arrayOfResponse);
         return this.setArrayOfResponsePromise(data);
       })
       .then(() => {
-        console.log(this.arrayOfResponse);
         return this.setLoadMoreFlagPromise();
       })
       .then(() => {
-        console.log(this.arrayOfResponse);
         return this.setAlignPromise('0', 500);
       });
   }

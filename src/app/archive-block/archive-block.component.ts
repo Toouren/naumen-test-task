@@ -28,12 +28,10 @@ export class ArchiveBlockComponent implements OnInit {
   }
 
   enteredOnBlock() {
-    console.log('entered');
     this.showClass = 'show-block';
   }
 
   leaveBlock() {
-    console.log('leave');
     this.showClass = 'hide-block';
   }
 }
