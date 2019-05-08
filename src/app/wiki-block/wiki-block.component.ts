@@ -129,6 +129,6 @@ export class WikiBlockComponent implements OnInit {
     const wikiRequest: IWikiRequest = {
       sroffset: this.getLastResponse().continue.sroffset
     };
-    this.wikiapiWorkerService.getJson(wikiRequest);
+    this.wikiapiWorkerService.getJsonForSearchRequest(wikiRequest);
   }
 }

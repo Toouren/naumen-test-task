@@ -30,7 +30,7 @@ export class InputFormComponent implements OnInit {
       locale: this.selectedLocal,
       request
     };
-    this.wikiapiWorkerService.getJson(wikiRequest);
+    this.wikiapiWorkerService.getJsonForSearchRequest(wikiRequest);
   }
 
   localeChangeHandler(event: Event) {

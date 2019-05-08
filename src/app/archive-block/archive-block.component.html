@@ -1,3 +1,6 @@
+<div class=img-block>
+  <img class="img-block__img" src="assets/img/clock.svg">
+</div>
 <div class="archive-wrapper" (mouseenter)=enteredOnBlock() (mouseleave)=leaveBlock() [ngClass]="showClass">
   <div class="archive-wrapper__header">История поиска:</div>
   <div class="search-blocks-container" *ngFor="let searchRequest of searchArchive.reverse()">

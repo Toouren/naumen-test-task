@@ -1,7 +1,7 @@
 <div *ngIf="successResponse">
   <div *ngFor="let response of arrayOfResponse" class="found-block-wrapper" [style.left]="leftAlignValue">
     <div *ngFor="let foundBlock of response?.query?.search" class="found-block">
-      <div class="found-block__title">{{foundBlock.title}}</div>
+      <div class="found-block__title"><a class="link" target="_blank" [href]="foundBlock.linkToPage">{{foundBlock.title}}</a></div>
       <div [innerHTML]="foundBlock.snippet+'...'" class="found-block__content"></div>
       <div class="info-block">
         <div class="info-block__word-number">Кол-во слов: {{foundBlock.wordcount}}</div>
@@ -10,13 +10,13 @@
     </div>
   </div>
 </div>
-<div *ngIf="emptyResponse">
+<div *ngIf="emptyResponse" class="error-block">
   <div class="found-block" [style.left]="leftAlignValue">
     <div class="found-block__content">По введенной информации, к сожалению, ничего не найдено.<br>
     Попробуйте сменить локализацию или проверить корректность запроса.</div>
   </div>
 </div>
-<div *ngIf="!successResponse && !emptyResponse">
+<div *ngIf="!successResponse && !emptyResponse" class="error-block">
   <div class="found-block" [style.left]="leftAlignValue">
     <div class="found-block__content">Произошла ошибка поиска.</div>
   </div>

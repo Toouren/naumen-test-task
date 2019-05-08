@@ -24,7 +24,7 @@ export class ArchiveBlockComponent implements OnInit {
       locale,
       request
     };
-    this.wikiapiWorkerService.getJson(wikiRequest);
+    this.wikiapiWorkerService.getJsonForSearchRequest(wikiRequest);
   }
 
   enteredOnBlock() {

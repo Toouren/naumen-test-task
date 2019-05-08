@@ -56,3 +56,26 @@
   color: rgba(145, 145, 145, .7);
   justify-content: space-between;
 }
+
+.error-block
+{
+  width: 100%;
+}
+
+.link
+{
+  cursor: pointer;
+  transition-property: all;
+  transition-duration: .3s;
+}
+
+.link:any-link
+{
+  color: black;
+  text-decoration: none;
+}
+
+.link:hover
+{
+  color: #f49ec4;
+}

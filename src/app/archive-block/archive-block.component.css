@@ -5,11 +5,25 @@
   position: fixed;
   top: 0;
   left: 0;
-  width: 15%;
+  width: 14%;
   height: 100vh;
+  background-color: #fff;
   font-family: 'Roboto', sans-serif;
   transition-property: all;
   transition-duration: 1s;
+}
+
+.img-block
+{
+  position: fixed;
+  top: 20px;
+  left: 20px;
+}
+
+.img-block__img
+{
+  width: 64px;
+  height: 64px;
 }
 
 .archive-wrapper__header

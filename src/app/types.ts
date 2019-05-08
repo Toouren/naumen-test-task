@@ -47,6 +47,7 @@ interface FoundBlock {
   snippet: string;
   timestamp: string;
   wordcount: number;
+  linkToPage?: string;
 }
 
 interface SearchInfo {
