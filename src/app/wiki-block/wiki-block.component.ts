@@ -69,9 +69,12 @@ export class WikiBlockComponent {
   }
 
   setAverageWordNumber() {
-    this.getLastResponse().query ? this.averageWordNumber = Math.floor(this.getAverageWordNumber()) :
-    this.averageWordNumber = 0;
-
+    let averageWordNumber = 0;
+    this.getLastResponse().query ? averageWordNumber = Math.floor(this.getAverageWordNumber()) : averageWordNumber = 0;
+    if (isNaN(averageWordNumber)) {
+      averageWordNumber = 0;
+    }
+    this.averageWordNumber = averageWordNumber;
   }
 
   setAlignPromise(value: string, timout: number) {
