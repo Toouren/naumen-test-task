@@ -8,7 +8,7 @@ import { IWikiResponse, IWikiRequest } from '../types';
   templateUrl: './wiki-block.component.html',
   styleUrls: ['./wiki-block.component.css']
 })
-export class WikiBlockComponent implements OnInit {
+export class WikiBlockComponent {
 
   arrayOfResponse: IWikiResponse[] = [];
   successResponse = true;
@@ -34,9 +34,6 @@ export class WikiBlockComponent implements OnInit {
         .subscribe(
           (data: IWikiResponse[]) => this.renderPageUpdatedData(data, false, true)
         );
-   }
-
-  ngOnInit() {
   }
 
   setAlignValueAsync(value: string, timout = 0) {

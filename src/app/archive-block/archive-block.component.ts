@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { WikiapiWorkerService } from '../wikiapi-worker/wikiapi-worker.service';
 import { ISearchRequest, IWikiRequest } from '../types';
 
@@ -7,16 +7,13 @@ import { ISearchRequest, IWikiRequest } from '../types';
   templateUrl: './archive-block.component.html',
   styleUrls: ['./archive-block.component.css']
 })
-export class ArchiveBlockComponent implements OnInit {
+export class ArchiveBlockComponent {
 
   searchArchive: ISearchRequest[] = [];
   showClass = 'hide-block';
   constructor(private wikiapiWorkerService: WikiapiWorkerService) {
     this.wikiapiWorkerService.archiveChangedEvent.subscribe(
       (searchArchive: ISearchRequest[]) => this.searchArchive = searchArchive);
-  }
-
-  ngOnInit() {
   }
 
   makeRequestToWiki(request: string, locale: string) {

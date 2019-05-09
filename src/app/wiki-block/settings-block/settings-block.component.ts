@@ -5,7 +5,7 @@ import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
   templateUrl: './settings-block.component.html',
   styleUrls: ['./settings-block.component.css']
 })
-export class SettingsBlockComponent implements OnInit {
+export class SettingsBlockComponent {
 
   @Input()
   totalhits: number;
@@ -15,7 +15,4 @@ export class SettingsBlockComponent implements OnInit {
   showBlock: string;
 
   constructor() { }
-
-  ngOnInit() {
-  }
 }

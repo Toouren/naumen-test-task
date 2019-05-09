@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { WikiapiWorkerService } from '../wikiapi-worker/wikiapi-worker.service';
 import { ILocale, IWikiRequest } from '../types';
 
@@ -7,7 +7,7 @@ import { ILocale, IWikiRequest } from '../types';
   templateUrl: './input-form.component.html',
   styleUrls: ['./input-form.component.css']
 })
-export class InputFormComponent implements OnInit {
+export class InputFormComponent {
 
   className = '';
   locales: ILocale[] = [
@@ -21,9 +21,6 @@ export class InputFormComponent implements OnInit {
     this.wikiapiWorkerService.getJsonErrorEvent.subscribe(() => this.setErrorClassName());
     this.wikiapiWorkerService.getJsonEmptyEvent.subscribe(() => this.setErrorClassName());
    }
-
-  ngOnInit() {
-  }
 
   makeRequestToWiki(request: string) {
     const wikiRequest: IWikiRequest = {

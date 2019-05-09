@@ -1,27 +1,51 @@
 # NaumenTestTask
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 7.3.8.
+## Локальный запуск
 
-## Development server
+`ng serve` для запуска на локалхосте. Доступен по адресу `http://localhost:4200/`.
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
+## Сборка
 
-## Code scaffolding
+`ng build` для сборки проекта. Собранное приложение будет в папке `dist/`. Для того, чтобы собрать продакшн версию использовать флаг `--prod`.
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+## Размещение в сети
 
-## Build
+Любое изменение `masterz` ветки на гитхабе, влечет за собой деплой в heroku. На heroku сервис собирается в директорию `dist/` и размещается по адресу `https://naumen-test-task.herokuapp.com`
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `--prod` flag for a production build.
+## Краткое описание
 
-## Running unit tests
+Проект редоставляет из себя сервис, с помощью которого можно искать текстовую информацию в статьях `wikipedia`. Сервис разработан с помощью фреймворка `Angular 7` и представлен в виде SPA.
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+## Как пользоваться сервисом
 
-## Running end-to-end tests
+* При открытии главной странице, можно заметить поисковую строку, две картинки в левом и правом углах и блок с выбором локализации википедии (Russian -- поиск будет производится в русской википедии, English -- в английской).
+  ![](https://i.imgur.com/3slU7M0.png)
+* Чтобы сделать запрос достаточно ввести его в поле поиска и нажать на кнопку "Поиск".
+  При успешном разрешении запроса, поисковая строка и поле выбора локализации сместятся вверх, а данные отобразятся под ними.
+  ![](blob:https://imgur.com/0b5d56d8-2305-4c25-9f5b-5140cb379b72)
+* При возникновении ошибки (например, отправки пустого запроса), поисковая строка останется на месте, а на экране появится       сообщение об ошибке.
+  ![](https://i.imgur.com/g0Mpm8f.png)
+* При запросе, ответ на который не содержит данных на википедии, поисковая строка так же останется в центре экрана, при этом 
+  появится запись об ответе без содержимого.
+  ![](https://i.imgur.com/XAJoWoR.png)
+* Если запрос успешный, но общее число статей, которое найдено по нему будет больше 10, то внизу появится надпись "Загрузить     еще", нажав на которую, можно загрузить еще блок из 10 записей по данному запросу.
+  ![](https://i.imgur.com/KZH31Nc.png)
+* Можно обратить внимание на левую часть экрана, при наведении курсора в любую часть (по высоте) левой стороны экрана,           появится блок, содержащий историю последних 10 успешных (тех, по которым не было возвращено блока с ошибкой) запросов. На      любой запрос из архива можно нажать, это синициирует новый запрос по старым данным.
+  ![](blob:https://imgur.com/6ab3b540-177f-43f1-9371-3f7b5e88456f)
+* Логика с правой частью идентична, только в блоке справа содержится информация о найденной информации.
 
-Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protractortest.org/).
+## Архитектура
 
-## Further help
+Весь сервис состоит из одного модуля (`app/app.module.ts`), в которм содержатся 5 компонент и 1 сервис:
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md).
+#### Компоненты:
+
+* `ArchiveBlockComponent` содержит логику работы блока с историей. Зависит от сервиса `WikiapiWorkerService`, используя его   методы.
+* `InputFormComponent` содержит логику работы блока с поисковой строкой и выбора локализации. Зависит от сервиса `WikiapiWorkerService`, используя его методы.
+* `WikiBlockComponent` содержит логику работы блока с результатом поиска. Зависит от сервиса `WikiapiWorkerService`, используя его методы.
+  * `SettingsBlockComponent` содержит логику работы блока с информацией о запросе. Является дочерним компонентном у  `WikiBlockComponent`, использует переданные от второго значения в процессе отрисовки.
+* `AppComponent` инициализирующий компонент, инициирует отрисовку других компонентов.
+
+### Сервис:
+
+В приложении реализована сущность типа сервис -- `WikiapiWorkerService`. Сервис содержит основную логику работы приложения. В нем формируется URL и происходит запрос на API википедии (метод `getJsonForSearchRequest`), принимаеются данные и возбуждаются события для их передчи в компоненты (метод `emitGetJsonEvent`). Так же происходит формирования архива с запросами  (метод `pushRequestToSearchArchive`) и возбуждается событие об его изменении (метод `emiteArchiveChangedEvent`).
