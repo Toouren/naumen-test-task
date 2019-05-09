@@ -106,7 +106,7 @@ export class WikiapiWorkerService {
   }
 
   private emiteArchiveChangedEvent() {
-    this.archiveChangedEvent.emit(this.searchArchive);
+    this.archiveChangedEvent.emit(Array.from(this.searchArchive));
   }
 
   private setWikiResponseArray(response: IWikiResponse) {

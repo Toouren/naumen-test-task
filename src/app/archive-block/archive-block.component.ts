@@ -13,7 +13,7 @@ export class ArchiveBlockComponent {
   showClass = 'hide-block';
   constructor(private wikiapiWorkerService: WikiapiWorkerService) {
     this.wikiapiWorkerService.archiveChangedEvent.subscribe(
-      (searchArchive: ISearchRequest[]) => this.searchArchive = searchArchive);
+      (searchArchive: ISearchRequest[]) => this.searchArchive = searchArchive.reverse());
   }
 
   makeRequestToWiki(request: string, locale: string) {
