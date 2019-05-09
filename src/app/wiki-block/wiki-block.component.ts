@@ -15,6 +15,9 @@ export class WikiBlockComponent implements OnInit {
   emptyResponse = false;
   loadMore = false;
   leftAlignValue: string;
+  totalhits = 0;
+  averageWordNumber = 0;
+  showClassForSettingsComp = 'hide-block';
 
   constructor(private wikiapiWorkerService: WikiapiWorkerService) {
     this.wikiapiWorkerService
@@ -52,6 +55,26 @@ export class WikiBlockComponent implements OnInit {
     typeof flag !== 'undefined' ? this.loadMore = flag :
     typeof this.getLastResponse().continue !== 'undefined' ? this.loadMore = true :
     this.loadMore = false;
+  }
+
+  setTotalhits() {
+    this.getLastResponse().query ? this.totalhits = this.getLastResponse().query.searchinfo.totalhits :
+    this.totalhits = 0;
+  }
+
+  getAverageWordNumber() {
+    const numberOfFoundBlocks = this.arrayOfResponse.length * this.getLastResponse().query.search.length;
+    return this.arrayOfResponse.reduce<number>((sumOfWordsInResponse, response) => {
+      return sumOfWordsInResponse += response.query.search.reduce<number>((sumOfWordsInFoundBlock, foundBlock) => {
+        return sumOfWordsInFoundBlock += foundBlock.wordcount;
+      }, 0);
+    }, 0) / numberOfFoundBlocks;
+  }
+
+  setAverageWordNumber() {
+    this.getLastResponse().query ? this.averageWordNumber = Math.floor(this.getAverageWordNumber()) :
+    this.averageWordNumber = 0;
+
   }
 
   setAlignPromise(value: string, timout: number) {
@@ -94,6 +117,16 @@ export class WikiBlockComponent implements OnInit {
     });
   }
 
+  setSearchInfoValuesPromise() {
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        this.setTotalhits();
+        this.setAverageWordNumber();
+        resolve();
+      }, 0);
+    });
+  }
+
   setFlags(successResponseFlag: boolean, emptyResponseFlag: boolean) {
     this.successResponse = successResponseFlag;
     this.emptyResponse = emptyResponseFlag;
@@ -121,6 +154,9 @@ export class WikiBlockComponent implements OnInit {
         return this.setLoadMoreFlagPromise();
       })
       .then(() => {
+        return this.setSearchInfoValuesPromise();
+      })
+      .then(() => {
         return this.setAlignPromise('0', 500);
       });
   }
@@ -130,5 +166,13 @@ export class WikiBlockComponent implements OnInit {
       sroffset: this.getLastResponse().continue.sroffset
     };
     this.wikiapiWorkerService.getJsonForSearchRequest(wikiRequest);
+  }
+
+  enteredOnBlock() {
+    this.showClassForSettingsComp = 'show-block';
+  }
+
+  leaveBlock() {
+    this.showClassForSettingsComp = 'hide-block';
   }
 }

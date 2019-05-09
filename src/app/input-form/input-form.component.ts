@@ -17,9 +17,9 @@ export class InputFormComponent implements OnInit {
   selectedLocal = 'en';
 
   constructor(private wikiapiWorkerService: WikiapiWorkerService) {
-    this.wikiapiWorkerService.getJsonSuccessEvent.subscribe(_ => this.setSuccessClassName());
-    this.wikiapiWorkerService.getJsonErrorEvent.subscribe(_ => this.setErrorClassName());
-    this.wikiapiWorkerService.getJsonEmptyEvent.subscribe(_ => this.setErrorClassName());
+    this.wikiapiWorkerService.getJsonSuccessEvent.subscribe(() => this.setSuccessClassName());
+    this.wikiapiWorkerService.getJsonErrorEvent.subscribe(() => this.setErrorClassName());
+    this.wikiapiWorkerService.getJsonEmptyEvent.subscribe(() => this.setErrorClassName());
    }
 
   ngOnInit() {

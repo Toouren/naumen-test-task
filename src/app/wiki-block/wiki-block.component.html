@@ -24,3 +24,9 @@
 <div *ngIf="loadMore" class="load-more">
   <div class="load-more__content" (click)=getMoreData()>Загрузить еще</div>
 </div>
+<app-settings-block (mouseenter)=enteredOnBlock() (mouseleave)=leaveBlock()
+[showBlock]="showClassForSettingsComp"
+[totalhits]="totalhits"
+[averageWordNumber]="averageWordNumber"
+[ngClass]="showBlock">
+</app-settings-block>

@@ -7,7 +7,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { WikiapiWorkerService } from './wikiapi-worker/wikiapi-worker.service';
 import { WikiBlockComponent } from './wiki-block/wiki-block.component';
 import { ArchiveBlockComponent } from './archive-block/archive-block.component';
-import { SettingsBlockComponent } from './settings-block/settings-block.component';
+import { SettingsBlockComponent } from './wiki-block/settings-block/settings-block.component';
 
 @NgModule({
   declarations: [

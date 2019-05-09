@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 
 @Component({
   selector: 'app-settings-block',
@@ -7,9 +7,15 @@ import { Component, OnInit } from '@angular/core';
 })
 export class SettingsBlockComponent implements OnInit {
 
+  @Input()
+  totalhits: number;
+  @Input()
+  averageWordNumber: number;
+  @Input()
+  showBlock: string;
+
   constructor() { }
 
   ngOnInit() {
   }
-
 }
