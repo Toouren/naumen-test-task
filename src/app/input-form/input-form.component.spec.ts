@@ -1,6 +1,8 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { InputFormComponent } from './input-form.component';
+import { WikiapiWorkerService } from '../wikiapi-worker/wikiapi-worker.service';
+import { HttpClient, HttpHandler } from '@angular/common/http';
 
 describe('InputFormComponent', () => {
   let component: InputFormComponent;
@@ -8,7 +10,8 @@ describe('InputFormComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ InputFormComponent ]
+      declarations: [ InputFormComponent ],
+      providers: [ WikiapiWorkerService, HttpClient, HttpHandler ]
     })
     .compileComponents();
   }));

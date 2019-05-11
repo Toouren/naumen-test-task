@@ -3,18 +3,18 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 
 import { IWikiResponse, ISearchRequest, IWikiRequest, IUrl } from '../types';
 
+const STATIC_PART_OF_QUERY_URL = 'origin=*&action=query';
+const STATIC_PART_OF_SEARCH_URL = 'list=search&utf8=&format=json';
+const STATIC_PART_OF_API_URL = 'w/api.php?';
+const MAIN_WIKI_URL_PART = {
+  ru: 'https://ru.wikipedia.org/',
+  en: 'https://en.wikipedia.org/'
+};
+
 @Injectable()
 export class WikiapiWorkerService {
-  private STATIC_PART_OF_QUERY_URL = 'origin=*&action=query';
-  private STATIC_PART_OF_SEARCH_URL = 'list=search&utf8=&format=json';
-  private STATIC_PART_OF_API_URL = 'w/api.php?';
-  private MAIN_WIKI_URL_PART = {
-    ru: 'https://ru.wikipedia.org/',
-    en: 'https://en.wikipedia.org/'
-  };
-  private wikiResponseArray: IWikiResponse[] = [];
-  private searchArchive: ISearchRequest[] = [];
-  private sroffsetFlag = false;
+  private wikiResponseArray = new WikiResponseArray();
+  private searchArchive = new SearchArchive();
 
   public getJsonSuccessEvent: EventEmitter<IWikiResponse[]> = new EventEmitter();
   public getJsonErrorEvent: EventEmitter<IWikiResponse[]> = new EventEmitter();
@@ -23,56 +23,27 @@ export class WikiapiWorkerService {
 
   constructor(private httpClient: HttpClient) { }
 
-  private validRequest(searchRequest: ISearchRequest): boolean {
-    const lastSearchRequst: ISearchRequest = this.searchArchive[this.searchArchive.length - 1];
-    return searchRequest.request === '' ||
-        (typeof lastSearchRequst !== 'undefined' &&
-        lastSearchRequst.locale === searchRequest.locale &&
-        lastSearchRequst.request === searchRequest.request);
-  }
-
-  private pushRequestToSearchArchive(url: IUrl) {
-    const searchRequest: ISearchRequest = {
-      request: url.request,
-      locale: url.locale
-    };
-
-    if (this.validRequest(searchRequest)) {
-      return;
-    } else {
-      if (this.searchArchive.length >= 10) {
-        this.searchArchive.splice(0, 1);
-      }
-      this.searchArchive.push(searchRequest);
-      this.emiteArchiveChangedEvent();
-    }
-  }
-
-  private getLastRequest(): ISearchRequest {
-    return this.searchArchive[this.searchArchive.length - 1];
-  }
-
   private buildSearchUrlString(locale: string, request: string, sroffset: number, srlimit: number): string {
-    const url = `${this.MAIN_WIKI_URL_PART[locale]}${this.STATIC_PART_OF_API_URL}
+    const url = `${MAIN_WIKI_URL_PART[locale]}${STATIC_PART_OF_API_URL}
                 srsearch=${request}&
                 srlimit=${srlimit}&
                 sroffset=${sroffset}&
-                ${this.STATIC_PART_OF_QUERY_URL}&
-                ${this.STATIC_PART_OF_SEARCH_URL}`;
+                ${STATIC_PART_OF_QUERY_URL}&
+                ${STATIC_PART_OF_SEARCH_URL}`;
     return url;
   }
 
   private buildSearchUrlObject(locale?: string, request?: string, sroffset?: number, srlimit?: number): IUrl {
-    const lastSearchRequst: ISearchRequest = this.getLastRequest();
+    const lastSearchRequst: ISearchRequest = this.searchArchive.getLastRequest();
     srlimit = srlimit || 10;
     request = (typeof request !== 'undefined') ? request : lastSearchRequst.request;
     locale = locale || lastSearchRequst.locale;
 
     if (sroffset) {
-      this.sroffsetFlag = true;
+      this.wikiResponseArray.setSroffsetFlag(true);
     } else {
       sroffset = 0;
-      this.sroffsetFlag = false;
+      this.wikiResponseArray.setSroffsetFlag(false);
     }
     const url = this.buildSearchUrlString(locale, request, sroffset, srlimit);
     const newUrlObject = {
@@ -97,7 +68,9 @@ export class WikiapiWorkerService {
         .get(url.urlString)
         .subscribe(
           (res: IWikiResponse) => {
-            this.pushRequestToSearchArchive(url);
+            if (this.searchArchive.pushRequestToSearchArchive(url)) {
+              this.emiteArchiveChangedEvent();
+            }
             this.emitGetJsonEvent(res);
           },
           (error: HttpErrorResponse) => {
@@ -106,36 +79,87 @@ export class WikiapiWorkerService {
   }
 
   private emiteArchiveChangedEvent() {
-    this.archiveChangedEvent.emit(Array.from(this.searchArchive));
+    this.archiveChangedEvent.emit(Array.from(this.searchArchive.getArchive()));
   }
 
-  private setWikiResponseArray(response: IWikiResponse) {
-    this.sroffsetFlag ? this.wikiResponseArray.push(response) :
-    this.wikiResponseArray.splice(0, this.wikiResponseArray.length, response);
+  private emitGetJsonEvent(response: IWikiResponse) {
+    this.wikiResponseArray.setResponseArray(response);
+    this.wikiResponseArray.getLastResponse().error ?
+    this.getJsonErrorEvent.emit(Array.from(this.wikiResponseArray.getResponseArray())) :
+    this.wikiResponseArray.getLastResponse().query.searchinfo.totalhits === 0 ?
+    this.getJsonEmptyEvent.emit(Array.from(this.wikiResponseArray.getResponseArray())) :
+    (
+      this.wikiResponseArray.setLinksForFoundBlocksOfLastResponse(this.searchArchive.getLastRequest().locale),
+      this.getJsonSuccessEvent.emit(Array.from(this.wikiResponseArray.getResponseArray()))
+    );
   }
 
-  private getLastResponse(): IWikiResponse {
-    return this.wikiResponseArray[this.wikiResponseArray.length - 1];
+}
+
+class SearchArchive {
+  constructor(private archive: ISearchRequest[] = []) {}
+
+  public getArchive() {
+    return this.archive;
   }
 
-  private setLinksForFoundBlocksOfLastResponse() {
+  public getLastRequest(): ISearchRequest {
+    return this.archive[this.archive.length - 1];
+  }
+
+  private unValidRequest(searchRequest: ISearchRequest): boolean {
+    const lastSearchRequst: ISearchRequest = this.getLastRequest();
+    return searchRequest.request === '' ||
+        (typeof lastSearchRequst !== 'undefined' &&
+        lastSearchRequst.locale === searchRequest.locale &&
+        lastSearchRequst.request === searchRequest.request);
+  }
+
+  public pushRequestToSearchArchive(url: IUrl): boolean {
+    const searchRequest: ISearchRequest = {
+      request: url.request,
+      locale: url.locale
+    };
+
+    if (this.unValidRequest(searchRequest)) {
+      return false;
+    } else {
+      if (this.archive.length >= 10) {
+        this.archive.splice(0, 1);
+      }
+      this.archive.push(searchRequest);
+      return true;
+    }
+  }
+}
+
+class WikiResponseArray {
+  constructor(private responseArray: IWikiResponse[] = [], private sroffsetFlag = false) {}
+
+  public getResponseArray() {
+    return this.responseArray;
+  }
+
+  public setSroffsetFlag(value: boolean) {
+    this.sroffsetFlag = value;
+  }
+
+  public setResponseArray(response: IWikiResponse) {
+    this.sroffsetFlag ? this.responseArray.push(response) :
+    this.responseArray.splice(0, this.responseArray.length, response);
+  }
+
+  public getLastResponse(): IWikiResponse {
+    return this.responseArray[this.responseArray.length - 1];
+  }
+
+  public setLinksForFoundBlocksOfLastResponse(locale: string) {
     const lastResponse = this.getLastResponse();
     lastResponse
       .query
       .search
       .forEach(foundBlock => {
-        foundBlock.linkToPage = `${this.MAIN_WIKI_URL_PART[this.getLastRequest().locale]}wiki/${foundBlock.title}`;
+        foundBlock.linkToPage = `${MAIN_WIKI_URL_PART[locale]}wiki/${foundBlock.title}`;
       });
   }
-
-  private emitGetJsonEvent(response: IWikiResponse) {
-    this.setWikiResponseArray(response);
-    this.getLastResponse().error ? this.getJsonErrorEvent.emit(Array.from(this.wikiResponseArray)) :
-    this.getLastResponse().query.searchinfo.totalhits === 0 ? this.getJsonEmptyEvent.emit(Array.from(this.wikiResponseArray)) :
-    (
-      this.setLinksForFoundBlocksOfLastResponse(),
-      this.getJsonSuccessEvent.emit(Array.from(this.wikiResponseArray))
-    );
-  }
-
 }

@@ -1,6 +1,8 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { WikiapiWorkerService } from '../wikiapi-worker/wikiapi-worker.service';
 
 import { ArchiveBlockComponent } from './archive-block.component';
+import { HttpClient, HttpHandler } from '@angular/common/http';
 
 describe('ArchiveBlockComponent', () => {
   let component: ArchiveBlockComponent;
@@ -8,7 +10,8 @@ describe('ArchiveBlockComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ ArchiveBlockComponent ]
+      declarations: [ ArchiveBlockComponent ],
+      providers: [ WikiapiWorkerService, HttpHandler, HttpClient ]
     })
     .compileComponents();
   }));
