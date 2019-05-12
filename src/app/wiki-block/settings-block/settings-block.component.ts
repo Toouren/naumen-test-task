@@ -17,8 +17,10 @@ export class SettingsBlockComponent {
   @Output()
   changedSortEvent: EventEmitter<string> = new EventEmitter();
 
-  private currentSortType = 'relevance';
-  private sortOptions = [
+  currentSortType = 'relevance';
+  disabled = true;
+
+  sortOptions = [
     {
       value: 'relevance',
       name: 'По релевантности'
@@ -32,8 +34,6 @@ export class SettingsBlockComponent {
       name: 'По дате изменения (новые-старые)'
     }
   ];
-
-  private disabled = true;
 
   constructor(private wikiapiWorkerService: WikiapiWorkerService) { }
 
