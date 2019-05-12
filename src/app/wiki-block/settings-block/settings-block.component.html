@@ -8,5 +8,18 @@
       <div class="search-info__totalhits">Кол-во найденных статей: {{totalhits}}</div>
       <div class="search-info__average-word-number">Среднее кол-во слов: {{averageWordNumber}}</div>
     </div>
+    <div class="sort-settings">
+        <div class="sort-settings__header">Сортировка запросов:</div>
+        <div class="sort-settings__info">Установки вступят в силу при следующем запросе</div>
+        <select class="settings-selector" (change)="selectChanged($event)" #sortSelection>
+          <option *ngFor="let option of sortOptions" [value]="option.value">{{option.name}}</option>
+        </select>
+        <div class="button-wrapper">
+          <button class="button-wrapper__button"
+          [ngClass]="ableClass"
+          [disabled]="disabled"
+          (click)="acceptSetting(sortSelection.value)">Принять</button>
+        </div>
+      </div>
   </div>
 </div>

@@ -31,6 +31,14 @@
   outline: none;
   cursor: pointer;
   font-family: 'Roboto', sans-serif;
+  transition-property: all;
+  transition-duration: .7s;
+}
+
+.button-wrapper__button:disabled
+{
+  opacity: .5;
+  cursor: not-allowed;
 }
 
 .button-wrapper
@@ -59,11 +67,26 @@
   opacity: 1;
 }
 
-.search-info__header
+.search-info__header,
+.sort-settings__header
 {
   font-size: 18px;
   margin: 10px;
   color: #f49ec4;
+}
+
+.sort-settings__info
+{
+  font-size: 12px;
+  margin-top: 10px;
+  margin-left: 10px;
+  color: rgba(145, 145, 145, .5);
+}
+
+.settings-selector
+{
+  font-size: 14px;
+  margin: 10px;
 }
 
 .img-block

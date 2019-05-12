@@ -1,10 +1,18 @@
+import * as queryString from 'query-string';
+
 import { Injectable, EventEmitter } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 
 import { IWikiResponse, ISearchRequest, IWikiRequest, IUrl } from '../types';
 
-const STATIC_PART_OF_QUERY_URL = 'origin=*&action=query';
-const STATIC_PART_OF_SEARCH_URL = 'list=search&utf8=&format=json';
+const staticQueryParamsString = queryString.stringify({
+  origin: '*',
+  action: 'query',
+  list: 'search',
+  utf8: '',
+  format: 'json'
+});
+
 const STATIC_PART_OF_API_URL = 'w/api.php?';
 const MAIN_WIKI_URL_PART = {
   ru: 'https://ru.wikipedia.org/',
@@ -15,6 +23,7 @@ const MAIN_WIKI_URL_PART = {
 export class WikiapiWorkerService {
   private wikiResponseArray = new WikiResponseArray();
   private searchArchive = new SearchArchive();
+  private srsort = 'relevance';
 
   public getJsonSuccessEvent: EventEmitter<IWikiResponse[]> = new EventEmitter();
   public getJsonErrorEvent: EventEmitter<IWikiResponse[]> = new EventEmitter();
@@ -23,13 +32,19 @@ export class WikiapiWorkerService {
 
   constructor(private httpClient: HttpClient) { }
 
+  public setSrsort(value: string) {
+    this.srsort = value;
+  }
+
   private buildSearchUrlString(locale: string, request: string, sroffset: number, srlimit: number): string {
+    const dinamicQueryParamsString = queryString.stringify({
+      srsearch: request,
+      srlimit,
+      sroffset,
+      srsort: this.srsort
+    });
     const url = `${MAIN_WIKI_URL_PART[locale]}${STATIC_PART_OF_API_URL}
-                srsearch=${request}&
-                srlimit=${srlimit}&
-                sroffset=${sroffset}&
-                ${STATIC_PART_OF_QUERY_URL}&
-                ${STATIC_PART_OF_SEARCH_URL}`;
+                  ${staticQueryParamsString}${dinamicQueryParamsString}`;
     return url;
   }
 
